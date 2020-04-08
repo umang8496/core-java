@@ -1,0 +1,257 @@
+==========================
+Creational_Design_Patterns
+==========================
+
+In software engineering, creational design patterns are design patterns that deal with object creation mechanisms, trying to create objects in a manner suitable to the situation.
+The basic form of object creation could result in design problems or added complexity to the design.
+Creational design patterns solve this problem by somehow controlling this object creation.
+
+Abstract Factory : Creates an instance of several families of classes
+Builder : Separates object construction from its representation
+Factory Method : Creates an instance of several derived classes
+Object Pool : Avoid expensive acquisition and release of resources by recycling objects that are no longer in use
+Prototype : A fully initialized instance to be copied or cloned
+Singleton : A class of which only a single instance can exist
+
+
+========================
+SINGLETON DESIGN PATTERN
+========================
+It lets you ensure that a class has only one instance, while providing a global access point to this instance.
+The Singleton pattern solves two problems at the same time, violating the Single Responsibility Principle.
+
+(1) Ensure that a class has just a single instance.
+Why would anyone want to control how many instances a class has?
+The most common reason for this is to control access to some shared resource—for example, a database or a file.
+
+(2) Provide a global access point to that instance.
+Remember those global variables that you used to store some essential objects? 
+While they’re very handy, they’re also very unsafe since any code can potentially overwrite the contents of those variables and crash the app.
+
+Implementation Details
+----------------------
+All implementations of the Singleton have these two steps in common:
+--> Make the default constructor private, to prevent other objects from using the new operator with the Singleton class.
+--> Create a static creation method that acts as a constructor.
+	Under the hood, this method calls the private constructor to create an object and saves it in a static field.
+	All following calls to this method return the cached object.
+
+If your code has access to the Singleton class, then it’s able to call the Singleton’s static method.
+So whenever that method is called, the same object is always returned.
+
+Use the Singleton pattern when a class in your program should have just a single instance available to all clients; for example, a single database object shared by different parts of the program.
+Use the Singleton pattern when you need stricter control over global variables.
+The Singleton pattern disables all other means of creating objects of a class except for the special creation method.
+This method either creates a new object or returns an existing one if it has already been created.
+
+Singleton Pattern says that just "define a class that has only one instance and provides a global point of access to it".
+There are two forms of singleton design pattern
+-->	Early Instantiation: creation of instance at load time.
+-->	Lazy Instantiation: creation of instance when required.
+
+Advantages
+--> You can be sure that a class has only a single instance.
+--> You gain a global access point to that instance.
+--> The singleton object is initialized only when it’s requested for the first time.
+
+Disadvantages
+--> Violates the Single Responsibility Principle. The pattern solves two problems at the time.
+--> The Singleton pattern can mask bad design, for instance, when the components of the program know too much about each other.
+--> The pattern requires special treatment in a multithreaded environment so that multiple threads won’t create a singleton object several times.
+--> It may be difficult to unit test the client code of the Singleton because many test frameworks rely on inheritance when producing mock objects.
+
+
+======================
+FACTORY DESIGN PATTERN
+======================
+It is used when we have a super class with multiple sub-classes and based on input, we need to return one of the sub-class.
+This pattern take out the responsibility of instantiation of a class from client program to the factory class.
+We can apply Singleton pattern on Factory class or make the factory method static.
+
+Super class in factory design pattern can be an interface, abstract class or a normal java class.
+
+Factory Method is a creational design pattern that provides an interface for creating objects in a superclass,
+but allows subclasses to alter the type of objects that will be created.
+
+The Factory Method pattern suggests that you replace direct object construction calls (using the new operator) with calls to a special factory method.
+Don’t worry: the objects are still created via the new operator, but it’s being called from within the factory method.
+Objects returned by a factory method are often referred to as “products.”
+
+Use the Factory Method when you don’t know beforehand the exact types and dependencies of the objects your code should work with.
+The Factory Method separates product construction code from the code that actually uses the product.
+Therefore it’s easier to extend the product construction code independently from the rest of the code.
+
+Use the Factory Method when you want to provide users of your library or framework with a way to extend its internal components.
+Inheritance is probably the easiest way to extend the default behavior of a library or framework.
+But how would the framework recognize that your subclass should be used instead of a standard component?
+The solution is to reduce the code that constructs components across the framework into a single factory method and
+let anyone override this method in addition to extending the component itself.
+
+Use the Factory Method when you want to save system resources by reusing existing objects instead of rebuilding them each time.
+
+Implementation Details
+----------------------
+--> Make all products follow the same interface. This interface should declare methods that make sense in every product.
+--> Add an empty factory method inside the creator class. The return type of the method should match the common product interface.
+--> In the creator’s code find all references to product constructors.
+	One by one, replace them with calls to the factory method, while extracting the product creation code into the factory method.
+--> Now, create a set of creator subclasses for each type of product listed in the factory method.
+	Override the factory method in the subclasses and extract the appropriate bits of construction code from the base method.
+--> If there are too many product types and it doesn’t make sense to create subclasses for all of them,
+	you can reuse the control parameter from the base class in subclasses.
+
+Advantages
+--> You avoid tight coupling between the creator and the concrete products.
+--> Single Responsibility Principle.
+--> Open/Closed Principle.
+
+Disadvantages
+--> The code may become more complicated since you need to introduce a lot of new subclasses to implement the pattern.
+	The best case scenario is when you’re introducing the pattern into an existing hierarchy of creator classes.
+
+
+===============================
+ABSTRACT FACTORY DESIGN PATTERN
+===============================
+It lets you produce families of related objects without specifying their concrete classes.
+Abstract Factory patterns work around a super-factory which creates other factories.
+This factory is also called as factory of factories.
+
+Use the Abstract Factory when your code needs to work with various families of related products,
+but you don’t want it to depend on the concrete classes of those products.
+They might be unknown beforehand or you simply want to allow for future extensibility.
+
+Consider implementing the Abstract Factory when you have a class with a set of Factory Methods that blur its primary responsibility.
+
+In a well-designed program each class is responsible only for one thing.
+When a class deals with multiple product types, it may be worth extracting its factory methods into a stand-alone factory class or a full-blown Abstract Factory implementation.
+
+Implementation Details
+----------------------
+--> Map out a matrix of distinct product types versus variants of these products.
+--> Declare abstract product interfaces for all product types.
+	Then make all concrete product classes implement these interfaces.
+--> Declare the abstract factory interface with a set of creation methods for all abstract products.
+--> Implement a set of concrete factory classes, one for each product variant.
+--> Create factory initialization code somewhere in the app.
+	It should instantiate one of the concrete factory classes, depending on the application configuration.
+	Pass this factory object to all classes that construct products.
+--> Scan through the code and find all direct calls to product constructors.
+	Replace them with calls to the appropriate creation method on the factory object.
+
+Advantages
+--> You can be sure that the products you’re getting from a factory are compatible with each other.
+--> You avoid tight coupling between concrete products and client code.
+--> Single Responsibility Principle.
+	You can extract the product creation code into one place, making the code easier to support.
+--> Open/Closed Principle. You can introduce new variants of products without breaking existing client code.
+
+Disadvantages
+--> The code may become more complicated than it should be.
+	Since a lot of new interfaces and classes are introduced along with the pattern.
+
+
+==============================
+BUILDER FACTORY DESIGN PATTERN
+==============================
+It lets you construct complex objects step by step. The pattern allows you to produce different types and representations of an object using the same construction code.
+
+There are three major issues with Factory and Abstract Factory design patterns when the Object contains a lot of attributes.
+--> Too Many arguments to pass from client program to the Factory class that can be error prone because most of the time,
+	the type of arguments are same and from client side its hard to maintain the order of the argument.
+
+--> Some of the parameters might be optional but in Factory pattern,
+	we are forced to send all the parameters and optional parameters need to send as NULL.
+
+--> If the object is heavy and its creation is complex,
+	then all that complexity will be part of Factory classes that is confusing.
+
+USE CASE
+--------
+Imagine a complex object that requires laborious, step-by-step initialization of many fields and nested objects.
+Such initialization code is usually buried inside a monstrous constructor with lots of parameters.
+Or even worse: scattered all over the client code.
+
+For example, let’s think about how to create a House object.
+To build a simple house, you need to construct four walls and a floor, install a door, fit a pair of windows, and build a roof. 
+But what if you want a bigger, brighter house, with a backyard and other goodies .
+
+The solution is to extend the base House class and create a set of subclasses to cover all combinations of the parameters.
+But eventually you’ll end up with a considerable number of subclasses.
+Any new parameter, such as the porch style, will require growing this hierarchy even more.
+
+There’s another approach that doesn’t involve breeding subclasses.
+You can create a giant constructor right in the base House class with all possible parameters that control the house object.
+While this approach indeed eliminates the need for subclasses, it creates another problem.
+In most cases most of the parameters will be unused, making the constructor calls pretty ugly.
+
+SOLUTION
+--------
+Builder pattern extracts the object construction code out of its own class and move it to separate objects called builders.
+The Builder pattern lets you construct complex objects step by step.
+The Builder doesn’t allow other objects to access the product while it’s being built.
+
+To create an object, you execute a series of these steps on a builder object.
+The important part is that you don’t need to call all of the steps.
+You can call only those steps that are necessary for producing a particular configuration of an object.
+
+Some of the construction steps might require different implementation to build various representations of the product.
+In this case, create several different builder classes that implement the same set of building steps, but in a different manner.
+Then you can use these builders in the construction process to produce different kinds of objects.
+
+Now execute a series of calls to the builder steps you use to construct a product into a separate class called director.
+The director class defines the order in which to execute the building steps, while the builder provides the implementation for those steps.
+
+Having a director class in your program isn’t strictly necessary.
+You can always call the building steps in a specific order directly from the client code.
+However, the director class might be a good place to put various construction routines so you can reuse them across your program.
+
+In addition, the director class completely hides the details of product construction from the client code.
+The client only needs to associate a builder with a director, launch the construction with the director, and get the result from the builder.
+
+Use the Builder pattern to get rid of a “telescopic constructor”.
+Use the Builder pattern when you want your code to be able to create different representations of some product.
+Use the Builder to construct Composite trees or other complex objects.
+
+Advantages
+--> You can construct objects step-by-step, defer construction steps or run steps recursively.
+--> You can reuse the same construction code when building various representations of products.
+--> Single Responsibility Principle. You can isolate complex construction code from the business logic of the product.
+
+Disadvantages
+--> The overall complexity of the code increases since the pattern requires creating multiple new classes.
+
+
+================================
+PROTOTYPE FACTORY DESIGN PATTERN
+================================
+Prototype is a creational design pattern that lets you copy existing objects without making your code dependent on their classes.
+Copying an object “from the outside” isn’t always possible.
+
+Say you have an object, and you want to create an exact copy of it. How would you do it?
+First, you have to create a new object of the same class.
+Then you have to go through all the fields of the original object and copy their values over to the new object.
+Nice! But there’s a catch.
+Not all objects can be copied that way because some of the object’s fields may be private and not visible from outside of the object itself.
+
+There’s one more problem with the direct approach.
+Since you have to know the object’s class to create a duplicate, your code becomes dependent on that class.
+If the extra dependency doesn’t scare you, there’s another catch.
+Sometimes you only know the interface that the object follows, but not its concrete class.
+
+The Prototype pattern delegates the cloning process to the actual objects that are being cloned.
+The pattern declares a common interface for all objects that support cloning.
+This interface lets you clone an object without coupling your code to the class of that object.
+Usually, such an interface contains just a single clone method.
+
+The implementation of the clone method is very similar in all classes.
+The method creates an object of the current class and carries over all of the field values of the old object into the new one. 
+You can even copy private fields because most programming languages let objects access private fields of other objects that belong to the same class.
+
+An object that supports cloning is called a prototype.
+When your objects have dozens of fields and hundreds of configurations, cloning them might serve as an alternative to subclassing.
+
+In real life, prototypes are used for performing various tests before starting mass production of a product.
+However, in this case, prototypes don’t participate in any actual production, playing a passive role instead.
+
+
