@@ -7,10 +7,10 @@ Structural patterns explain how to assemble objects and classes into larger stru
 Adapter: Adapter is a structural design pattern that allows objects with incompatible interfaces to collaborate.
 Bridge: This is a design mechanism that encapsulates an implementation class inside of an interface class.
 Composite: Using the Composite pattern makes sense only when the core model of the app can be represented as a tree.
-Decorator:
-Facade:
-Flyweight:
-Proxy:
+Decorator:It lets us attach new behaviors to objects by placing these objects inside special wrapper objects that contain the behaviors.
+Facade: It provides a simplified interface to a library, a framework, or any other complex set of classes.
+Flyweight: The Flyweight pattern has a single purpose: minimizing memory intake.
+Proxy: It provides a substitute or placeholder for another object.
 
 
 ======================
@@ -235,14 +235,139 @@ Use the pattern when it’s awkward or not possible to extend an object’s behavior
 =====================
 FACADE DESIGN PATTERN
 =====================
+It provides a unified interface to a set of interfaces in a subsystem.
+It provides a simplified interface to a library, a framework, or any other complex set of classes.
+It defines a higher-level interface that makes the subsystem easier to use.
+The facade pattern is appropriate when we have a complex system that we want to expose to clients in a simplified way. Its purpose is to hide internal complexity behind a single interface that appears simple from the outside.
+
+Facade also decouples the code that uses the system from the details of the subsystems, making it easier to modify the system later.
+In Java programming, we must have connected to a database to fetch some data.
+We simply call the method dataSource.getConnection() to get the connection but internally a lot of things happen such as loading the driver, creating connection or fetching connection from pool, update stats and then return the connection reference to caller method.
+
+How to Implement ?
+------------------
+01. Check whether it’s possible to provide a simpler interface than what an existing subsystem already provides.
+	We’re on the right track if this interface makes the client code independent from many of the subsystem’s classes.
+02. Declare and implement this interface in a new facade class.
+	The facade should redirect the calls from the client code to appropriate objects of the subsystem.
+	The facade should be responsible for initializing the subsystem and managing its further life cycle unless the client code already does this.
+03. To get the full benefit from the pattern, make all the client code communicate with the subsystem only via the facade.
+	Now the client code is protected from any changes in the subsystem code.
+	For example, when a subsystem gets upgraded to a new version, we will only need to modify the code in the facade.
+04. If the facade becomes too big, consider extracting part of its behavior to a new, refined facade class.
+
+Facade defines a new interface for existing objects, whereas Adapter tries to make the existing interface usable.
+Adapter usually wraps just one object, while Facade works with an entire subsystem of objects.
+
+Facade design pattern is more like a helper for client applications, it doesn’t hide subsystem interfaces from the client.
+Whether to use Facade or not is completely dependent on client code.
+
+It can be applied at any point of development, usually when the number of interfaces grow and system gets complex.
+Subsystem interfaces are not aware of Facade and they shouldn’t have any reference of the Facade interface.
+It should be applied for similar kind of interfaces, its purpose is to provide a single interface rather than multiple interfaces that does the similar kind of jobs.
+
+Applicability
+-------------
+Use the Facade pattern when we need to have a limited but straightforward interface to a complex subsystem.
+Use the Facade when we want to structure a subsystem into layers.
 
 
 ========================
 FLYWEIGHT DESIGN PATTERN
 ========================
+Flyweight lets us fit more objects into the available amount of RAM by sharing common parts of state between multiple objects instead of keeping all of the data in each object.
+
+The constant data of an object is usually called the intrinsic state.
+It lives within the object; other objects can only read it, not change it.
+The rest of the object’s state, often altered “from the outside” by other objects, is called the extrinsic state.
+
+The Flyweight pattern suggests to stop storing the extrinsic state inside the object.
+Instead, we should pass this state to specific methods which rely on it.
+Only the intrinsic state stays within the object, letting us reuse it in different contexts.
+As a result, we’d need fewer of these objects since they only differ in the intrinsic state, which has much fewer variations than the extrinsic.
+
+An object that only stores the intrinsic state is called a flyweight.
+
+Since the same flyweight object can be used in different contexts, we have to make sure that its state can’t be modified.
+A flyweight should initialize its state just once, via constructor parameters.
+It shouldn’t expose any setters or public fields to other objects.
+
+The Flyweight pattern is merely an optimization.
+Before applying it, make sure the program does have the RAM consumption problem related to having a massive number of similar objects in memory at the same time.
+Make sure that this problem can’t be solved in any other meaningful way.
+
+The Flyweight class contains the portion of the original object’s state that can be shared between multiple objects.
+The same flyweight object can be used in many different contexts.
+The state stored inside a flyweight is called “intrinsic.”
+The state passed to the flyweight’s methods is called “extrinsic.”
+
+The Context class contains the extrinsic state, unique across all original objects.
+When a context is paired with one of the flyweight objects, it represents the full state of the original object.
+
+Usually, the behavior of the original object remains in the flyweight class.
+In this case, whoever calls a flyweight’s method must also pass appropriate bits of the extrinsic state into the method’s parameters.
+On the other hand, the behavior can be moved to the context class, which would use the linked flyweight merely as a data object.
+
+The Client calculates or stores the extrinsic state of flyweights.
+From the client’s perspective, a flyweight is a template object which can be configured at runtime by passing some contextual data into parameters of its methods.
+
+The Flyweight Factory manages a pool of existing flyweights.
+With the factory, clients don’t create flyweights directly.
+Instead, they call the factory, passing it bits of the intrinsic state of the desired flyweight.
+The factory looks over previously created flyweights and either returns an existing one that matches search criteria or creates a new one if nothing is found.
+
+The Flyweight pattern has a single purpose: minimizing memory intake.
+If our program doesn’t struggle with a shortage of RAM, then we might just ignore this pattern for a while.
 
 
 ====================
 PROXY DESIGN PATTERN
 ====================
+Proxy is a structural design pattern that provides an object that acts as a substitute for a real service object used by a client.
+A proxy receives client requests, does some work (access control, caching, etc.) and then passes the request to a service object.
+
+A real world example can be a cheque or credit card is a proxy for what is in our bank account.
+It can be used in place of cash, and provides a means of accessing that cash when required.
+And that’s exactly what the Proxy pattern does – “Controls and manage access to the object they are protecting“.
+
+Proxy pattern is used when we need to create a wrapper to cover the main object’s complexity from the client.
+
+Remote Proxy
+------------
+They are responsible for representing the object located remotely.
+Talking to the real object might involve marshalling and unmarshalling of data and talking to the remote object.
+All that logic is encapsulated in these proxies and the client application need not worry about them.
+
+Virtual Proxy
+-------------
+These proxies will provide some default and instant results if the real object is supposed to take some time to produce results.
+These proxies initiate the operation on real objects and provide a default result to the application.
+Once the real object is done, these proxies push the actual data to the client where it has provided dummy data earlier.
+
+Protection Proxy
+----------------
+If an application does not have access to some resource then such proxies will talk to the objects in applications that have access to that resource and then get the result back.
+
+Smart Proxy
+-----------
+A smart proxy provides additional layer of security by interposing specific actions when the object is accessed.
+An example can be to check if the real object is locked before it is accessed to ensure that no other object can change it.
+
+One of the advantages of Proxy pattern is security.
+This pattern avoids duplication of objects which might be huge size and memory intensive. This in turn increases the performance of the application.
+The remote proxy also ensures about security by installing the local code proxy in the client machine and then accessing the server with help of the remote code.
+
+Proxies delegate all of the real work to some other object.
+Each proxy method should, in the end, refer to a service object unless the proxy is a subclass of a service.
+
+The Service Interface declares the interface of the Service.
+The proxy must follow this interface to be able to disguise itself as a service object.
+
+The Service is a class that provides some useful business logic.
+
+The Proxy class has a reference field that points to a service object.
+After the proxy finishes its processing (lazy initialization, logging, access control, caching, etc.), it passes the request to the service object.
+
+The Client should work with both services and proxies via the same interface.
+This way we can pass a proxy into any code that expects a service object.
 
